@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Monuments Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora&family=Playfair+Display&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Reset Styles ===== */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Lora', serif;
+    background: #f9f8f7;
+    color: #333;
+    overflow: hidden; /* Sidebar and content scroll independently */
+  }
+
+  /* ===== Sidebar ===== */
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: #1e1e2f;
+    color: #eee;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+    border-right: 3px solid #5e4a7d;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    scroll-behavior: smooth;
+    z-index: 10;
+  }
+
+  #sidebar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #c9a2ff;
+    text-align: center;
+    letter-spacing: 1.2px;
+  }
+
+  #sidebar ul {
+    list-style: none;
+  }
+
+  #sidebar ul li {
+    margin-bottom: 0.8rem;
+  }
+
+  #sidebar ul li a {
+    color: #ddd;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 6px 12px;
+    display: block;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  #sidebar ul li a:hover,
+  #sidebar ul li a.active {
+    background: #c9a2ff;
+    color: #1e1e2f;
+    font-weight: 600;
+  }
+
+  /* ===== Main Content ===== */
+  .container {
+    margin-left: 280px; /* width of sidebar */
+    height: 100vh;
+    overflow-y: auto;
+    padding: 3rem 4rem;
+    background: #fff;
+    box-shadow: inset 0 0 20px #ddd;
+    scroll-behavior: smooth;
+  }
+
+  .main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #5e4a7d;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  .content-section {
+    max-width: 900px;
+    margin: 0 auto 3rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: #444;
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  /* ===== Quiz styles ===== */
+  #quiz-container h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #5e4a7d;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1.2px;
+  }
+  .question {
+    margin-bottom: 1.5rem;
+  }
+  .question p {
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  label:hover {
+    color: #5e4a7d;
+  }
+  input[type="radio"] {
+    margin-right: 0.6rem;
+  }
+  button#submit-quiz {
+    background: #5e4a7d;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    box-shadow: 0 4px 12px rgba(94,74,125,0.5);
+    transition: background-color 0.3s ease;
+  }
+  button#submit-quiz:hover {
+    background: #c9a2ff;
+    color: #1e1e2f;
+    box-shadow: 0 6px 20px rgba(201,162,255,0.8);
+  }
+
+  /* ===== Footer ===== */
+  #page-footer {
+    position: fixed;
+    bottom: 0;
+    left: 280px; /* sidebar width */
+    right: 0;
+    background: #1e1e2f;
+    color: #c9a2ff;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1rem 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+    z-index: 20;
+    margin-top: 10px;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px) {
+    #sidebar {
+      width: 220px;
+    }
+    .container {
+      margin-left: 220px;
+      padding: 2rem 2.5rem;
+    }
+    #page-footer {
+      left: 220px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    #sidebar {
+      position: static;
+      width: 100%;
+      height: auto;
+      border-right: none;
+      box-shadow: none;
+      padding: 1rem 1rem 0.5rem 1rem;
+    }
+    .container {
+      margin: 0;
+      height: auto;
+      padding: 1.5rem 1.5rem 5rem 1.5rem;
+    }
+    #page-footer {
+      position: static;
+      left: 0;
+    }
+  }
+
+  /* ===== Animations ===== */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <h2>Monuments of India</h2>
+  <ul>
+    <li><a href="index.html">Start of the Trip</a></li>
+    <li><a href="taj.html">Taj Mahal</a></li>
+    <li><a href="qutub.html">Qutub Minar</a></li>
+    <li><a href="redfort.html">Red Fort</a></li>
+    <li><a href="gateway.html">Gateway of India</a></li>
+    <li><a href="charminar.html">Charminar</a></li>
+    <li><a href="hawa.html">Hawa Mahal</a></li>
+    <li><a href="mysore.html">Mysore Palace</a></li>
+    <li><a href="sun.html">Sun Temple</a></li>
+    <li><a href="ajanta.html">Ajanta Caves</a></li>
+    <li><a href="ellora.html">Ellora Caves</a></li>
+    <li><a href="lotus.html">Lotus Temple</a></li>
+    <li><a href="india.html">India Gate</a></li>
+    <li><a href="amer.html">Amer Fort</a></li>
+    <li><a href="sanchi.html">Sanchi Stupa</a></li>
+    <li><a href="victoria.html">Victoria Memorial</a></li>
+    <li><a href="meenakshi.html">Meenakshi Temple</a></li>
+    <li><a href="gol.html">Gol Gumbaz</a></li>
+    <li><a href="jantar.html">Jantar Mantar</a></li>
+    <li><a href="khajuraho.html">Khajuraho Temples</a></li>
+    <li><a href="agra.html">Agra Fort</a></li>
+    <li><a href="games.html">Games</a></li>
+    <li><a href="quiz.html" class="active">Quiz</a></li>
+  </ul>
+</aside>
+
+<div class="container">
+  <h1 class="main-title">Monuments Quiz</h1>
+  <section id="quiz-container" class="content-section">
+    <h2>Test Your Knowledge!</h2>
+
+    <form id="quiz-form">
+
+      <div class="question">
+        <p>1. Where is the Taj Mahal located?</p>
+        <label><input type="radio" name="q1" value="Agra" /> Agra</label>
+        <label><input type="radio" name="q1" value="Delhi" /> Delhi</label>
+        <label><input type="radio" name="q1" value="Jaipur" /> Jaipur</label>
+        <label><input type="radio" name="q1" value="Mumbai" /> Mumbai</label>
+      </div>
+
+      <div class="question">
+        <p>2. Which monument is known as the tallest brick minaret in the world?</p>
+        <label><input type="radio" name="q2" value="Qutub Minar" /> Qutub Minar</label>
+        <label><input type="radio" name="q2" value="Charminar" /> Charminar</label>
+        <label><input type="radio" name="q2" value="Jantar Mantar" /> Jantar Mantar</label>
+        <label><input type="radio" name="q2" value="Red Fort" /> Red Fort</label>
+      </div>
+
+      <div class="question">
+        <p>3. The Gateway of India is located in which city?</p>
+        <label><input type="radio" name="q3" value="Mumbai" /> Mumbai</label>
+        <label><input type="radio" name="q3" value="Chennai" /> Chennai</label>
+        <label><input type="radio" name="q3" value="Kolkata" /> Kolkata</label>
+        <label><input type="radio" name="q3" value="Delhi" /> Delhi</label>
+      </div>
+
+      <div class="question">
+        <p>4. Which monument is famous for its 'peacock throne'?</p>
+        <label><input type="radio" name="q4" value="Red Fort" /> Red Fort</label>
+        <label><input type="radio" name="q4" value="Agra Fort" /> Agra Fort</label>
+        <label><input type="radio" name="q4" value="Mysore Palace" /> Mysore Palace</label>
+        <label><input type="radio" name="q4" value="Amer Fort" /> Amer Fort</label>
+      </div>
+
+      <div class="question">
+        <p>5. Which monument is known as the 'Palace of Winds'?</p>
+        <label><input type="radio" name="q5" value="Hawa Mahal" /> Hawa Mahal</label>
+        <label><input type="radio" name="q5" value="Lotus Temple" /> Lotus Temple</label>
+        <label><input type="radio" name="q5" value="Sun Temple" /> Sun Temple</label>
+        <label><input type="radio" name="q5" value="Victoria Memorial" /> Victoria Memorial</label>
+      </div>
+
+      <div class="question">
+        <p>6. Where are the Ajanta Caves located?</p>
+        <label><input type="radio" name="q6" value="Maharashtra" /> Maharashtra</label>
+        <label><input type="radio" name="q6" value="Rajasthan" /> Rajasthan</label>
+        <label><input type="radio" name="q6" value="Gujarat" /> Gujarat</label>
+        <label><input type="radio" name="q6" value="Tamil Nadu" /> Tamil Nadu</label>
+      </div>
+
+      <div class="question">
+        <p>7. Which temple is famous for its erotic sculptures?</p>
+        <label><input type="radio" name="q7" value="Khajuraho Temples" /> Khajuraho Temples</label>
+        <label><input type="radio" name="q7" value="Meenakshi Temple" /> Meenakshi Temple</label>
+        <label><input type="radio" name="q7" value="Sun Temple" /> Sun Temple</label>
+        <label><input type="radio" name="q7" value="Lotus Temple" /> Lotus Temple</label>
+      </div>
+
+      <div class="question">
+        <p>8. Which monument was built by Emperor Shah Jahan?</p>
+        <label><input type="radio" name="q8" value="Taj Mahal" /> Taj Mahal</label>
+        <label><input type="radio" name="q8" value="Red Fort" /> Red Fort</label>
+        <label><input type="radio" name="q8" value="Qutub Minar" /> Qutub Minar</label>
+        <label><input type="radio" name="q8" value="Victoria Memorial" /> Victoria Memorial</label>
+      </div>
+
+      <div class="question">
+        <p>9. Which monument is shaped like a lotus flower?</p>
+        <label><input type="radio" name="q9" value="Lotus Temple" /> Lotus Temple</label>
+        <label><input type="radio" name="q9" value="Meenakshi Temple" /> Meenakshi Temple</label>
+        <label><input type="radio" name="q9" value="Sun Temple" /> Sun Temple</label>
+        <label><input type="radio" name="q9" value="Gol Gumbaz" /> Gol Gumbaz</label>
+      </div>
+
+      <div class="question">
+        <p>10. The Sun Temple is located in which Indian state?</p>
+        <label><input type="radio" name="q10" value="Odisha" /> Odisha</label>
+        <label><input type="radio" name="q10" value="Karnataka" /> Karnataka</label>
+        <label><input type="radio" name="q10" value="Uttar Pradesh" /> Uttar Pradesh</label>
+        <label><input type="radio" name="q10" value="Rajasthan" /> Rajasthan</label>
+      </div>
+
+      <div class="question">
+        <p>11. Which monument is known as a mausoleum for Mumtaz Mahal?</p>
+        <label><input type="radio" name="q11" value="Taj Mahal" /> Taj Mahal</label>
+        <label><input type="radio" name="q11" value="Agra Fort" /> Agra Fort</label>
+        <label><input type="radio" name="q11" value="Red Fort" /> Red Fort</label>
+        <label><input type="radio" name="q11" value="Victoria Memorial" /> Victoria Memorial</label>
+      </div>
+
+      <div class="question">
+        <p>12. Which is the largest dome built in India?</p>
+        <label><input type="radio" name="q12" value="Gol Gumbaz" /> Gol Gumbaz</label>
+        <label><input type="radio" name="q12" value="Lotus Temple" /> Lotus Temple</label>
+        <label><input type="radio" name="q12" value="Victoria Memorial" /> Victoria Memorial</label>
+        <label><input type="radio" name="q12" value="Hawa Mahal" /> Hawa Mahal</label>
+      </div>
+
+      <div class="question">
+        <p>13. Which monument was built to mark victory over Portuguese in 1631?</p>
+        <label><input type="radio" name="q13" value="Gateway of India" /> Gateway of India</label>
+        <label><input type="radio" name="q13" value="Victoria Memorial" /> Victoria Memorial</label>
+        <label><input type="radio" name="q13" value="Red Fort" /> Red Fort</label>
+        <label><input type="radio" name="q13" value="Sanchi Stupa" /> Sanchi Stupa</label>
+      </div>
+
+      <div class="question">
+        <p>14. Which temple is located in Madurai and famous for its intricate architecture?</p>
+        <label><input type="radio" name="q14" value="Meenakshi Temple" /> Meenakshi Temple</label>
+        <label><input type="radio" name="q14" value="Khajuraho Temples" /> Khajuraho Temples</label>
+        <label><input type="radio" name="q14" value="Sun Temple" /> Sun Temple</label>
+        <label><input type="radio" name="q14" value="Amer Fort" /> Amer Fort</label>
+      </div>
+
+      <div class="question">
+        <p>15. The Jantar Mantar is known for what purpose?</p>
+        <label><input type="radio" name="q15" value="Astronomical Observations" /> Astronomical Observations</label>
+        <label><input type="radio" name="q15" value="Religious Ceremonies" /> Religious Ceremonies</label>
+        <label><input type="radio" name="q15" value="Fortification" /> Fortification</label>
+        <label><input type="radio" name="q15" value="Gardens" /> Gardens</label>
+      </div>
+
+      <button type="button" id="submit-quiz">Submit Quiz</button>
+    </form>
+
+    <div id="result" style="text-align:center; font-size:1.3rem; margin-top:1.5rem; font-weight:700; color:#5e4a7d;"></div>
+  </section>
+</div>
+
+<footer id="page-footer">
+  © 2025 Monuments of India. All Rights Reserved.
+</footer>
+
+<script>
+  // Quiz answers keyed by question name
+  const answers = {
+    q1: "Agra",
+    q2: "Qutub Minar",
+    q3: "Mumbai",
+    q4: "Red Fort",
+    q5: "Hawa Mahal",
+    q6: "Maharashtra",
+    q7: "Khajuraho Temples",
+    q8: "Taj Mahal",
+    q9: "Lotus Temple",
+    q10: "Odisha",
+    q11: "Taj Mahal",
+    q12: "Gol Gumbaz",
+    q13: "Gateway of India",
+    q14: "Meenakshi Temple",
+    q15: "Astronomical Observations"
+  };
+
+  document.getElementById('submit-quiz').addEventListener('click', () => {
+    const form = document.getElementById('quiz-form');
+    let score = 0;
+    let unanswered = 0;
+
+    for (const q in answers) {
+      const selected = form.querySelector(`input[name=${q}]:checked`);
+      if (!selected) {
+        unanswered++;
+      } else if (selected.value === answers[q]) {
+        score++;
+      }
+    }
+
+    const resultDiv = document.getElementById('result');
+    if (unanswered > 0) {
+      resultDiv.textContent = `Please answer all questions before submitting. ${unanswered} question(s) unanswered.`;
+      resultDiv.style.color = 'red';
+      return;
+    }
+    resultDiv.style.color = '#5e4a7d';
+    resultDiv.textContent = `You scored ${score} out of 15!`;
+  });
+</script>
+
+</body>
+</html>
