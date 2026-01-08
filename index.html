@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <title>Timeless Treasures: Discover India's Iconic Monuments</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lora&family=Playfair+Display&family=Roboto&display=swap" rel="stylesheet" />
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- Sidebar with monument links -->
+  <nav id="sidebar" aria-label="Famous Monuments Navigation">
+    <h2>Famous Monuments</h2>
+    <ul>
+      <li><a href="taj.html">Taj Mahal</a></li>
+      <li><a href="qutub.html">Qutub Minar</a></li>
+      <li><a href="redfort.html">Red Fort</a></li>
+      <li><a href="gateway.html">Gateway of India</a></li>
+      <li><a href="charminar.html">Charminar</a></li>
+      <li><a href="hawa.html">Hawa Mahal</a></li>
+      <li><a href="mysore.html">Mysore Palace</a></li>
+      <li><a href="sun.html">Sun Temple</a></li>
+      <li><a href="ajanta.html">Ajanta Caves</a></li>
+      <li><a href="ellora.html">Ellora Caves</a></li>
+      <li><a href="lotus.html">Lotus Temple</a></li>
+      <li><a href="india.html">India Gate</a></li>
+      <li><a href="amer.html">Amer Fort</a></li>
+      <li><a href="sanchi.html">Sanchi Stupa</a></li>
+      <li><a href="victoria.html">Victoria Memorial</a></li>
+      <li><a href="meenakshi.html">Meenakshi Temple</a></li>
+      <li><a href="gol.html">Gol Gumbaz</a></li>
+      <li><a href="jantar.html">Jantar Mantar</a></li>
+      <li><a href="khajuraho.html">Khajuraho Temples</a></li>
+      <li><a href="agra.html">Agra Fort</a></li>
+      <li><a href="games.html">Games</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <main class="container" role="main" tabindex="-1">
+    <section class="content-section section-header">
+      <h1 class="main-title">A Tapestry Woven in Stone and Spirit</h1>
+      <p>
+        India’s monuments are much more than just architectural marvels — they are the chapters of a living history book that narrates the evolution of civilizations, religions, and art forms spanning thousands of years. Each region of India offers a distinct flavor, from the grand forts of Rajasthan to the serene temples of South India, and the colonial heritage in the cities.
+      </p>
+      <p>
+        The intricate carvings, majestic domes, and towering spires are reflections of the creative genius and spiritual devotion of the people who built them. These structures have witnessed the rise and fall of empires, the mingling of cultures, and the resilience of traditions that have survived through the ages.
+      </p>
+    </section>
+
+    <section class="content-section section-header">
+      <h2 class="sub-title">Preserving the Past, Inspiring the Future</h2>
+      <p>
+        Today, these monuments are not only cherished for their beauty but also protected as invaluable cultural treasures. They continue to inspire architects, historians, artists, and travelers worldwide. Whether it’s the mystique of ancient rock-cut caves or the grandeur of palaces, India’s monuments invite you to step back in time and experience the legacy that shapes modern India.
+      </p>
+      <p>
+        Explore the stories behind these incredible sites, discover lesser-known gems, and understand their significance in the cultural fabric of the nation. Let this journey through stone and history ignite your curiosity and deepen your appreciation for India’s extraordinary heritage.
+      </p>
+    </section>
+  </main>
+
+  <!-- Back to top button -->
+  <a href="#" id="back-to-top" aria-label="Back to top" title="Back to top">&#8679;</a>
+
+  <!-- Footer -->
+  <footer id="page-footer" role="contentinfo">
+    &copy; 2025 Timeless Treasures | All Rights Reserved
+  </footer>
+
+  <!-- Back to top JS -->
+  <script>
+    const backToTopButton = document.getElementById('back-to-top');
+    let isVisible = false;
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > window.innerHeight) {
+        if (!isVisible) {
+          backToTopButton.classList.remove('hide');
+          backToTopButton.classList.add('show');
+          isVisible = true;
+        }
+      } else {
+        if (isVisible) {
+          backToTopButton.classList.remove('show');
+          backToTopButton.classList.add('hide');
+          isVisible = false;
+        }
+      }
+    });
+
+    backToTopButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
