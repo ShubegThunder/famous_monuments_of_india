@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maze of Monuments</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora&family=Playfair+Display&family=Roboto&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css">
+<style>
+  #maze-container {
+    display: grid;
+    gap: 2px;
+    margin: 2rem auto;
+  }
+  .cell {
+    width: 40px;
+    height: 40px;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #333;
+  }
+  .wall {
+    background: #1e1e2f;
+  }
+  .player {
+    background: #1abc9c;
+    color: white;
+  }
+  .monument {
+    background: #c9a2ff;
+    color: #1e1e2f;
+  }
+  #level-banner {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    background: #1abc9c;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: none;
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <h2>Monuments of India</h2>
+  <ul>
+    <li><a href="index.html">Start of the Trip</a></li>
+    <li><a href="taj.html">Taj Mahal</a></li>
+    <li><a href="qutub.html">Qutub Minar</a></li>
+    <li><a href="redfort.html">Red Fort</a></li>
+    <li><a href="gateway.html">Gateway of India</a></li>
+    <li><a href="charminar.html">Charminar</a></li>
+    <li><a href="hawa.html">Hawa Mahal</a></li>
+    <li><a href="mysore.html">Mysore Palace</a></li>
+    <li><a href="sun.html">Sun Temple</a></li>
+    <li><a href="ajanta.html">Ajanta Caves</a></li>
+    <li><a href="ellora.html">Ellora Caves</a></li>
+    <li><a href="lotus.html">Lotus Temple</a></li>
+    <li><a href="india.html">India Gate</a></li>
+    <li><a href="amer.html">Amer Fort</a></li>
+    <li><a href="sanchi.html">Sanchi Stupa</a></li>
+    <li><a href="victoria.html">Victoria Memorial</a></li>
+    <li><a href="meenakshi.html">Meenakshi Temple</a></li>
+    <li><a href="gol.html">Gol Gumbaz</a></li>
+    <li><a href="jantar.html">Jantar Mantar</a></li>
+    <li><a href="khajuraho.html">Khajuraho Temples</a></li>
+    <li><a href="agra.html">Agra Fort</a></li>
+    <li><a href="games.html" class="active">Games</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+  </ul>
+</aside>
+
+<main class="container">
+  <h1 class="main-title">Maze of Monuments</h1>
+  <p id="level-status">Level 1</p>
+  <p>Use arrow keys to move and collect all monuments (M) to unlock the next level.</p>
+
+  <div id="maze-container"></div>
+  <p id="status" style="margin-top:1rem; font-weight:bold;"></p>
+
+  <footer id="page-footer">
+    <p>&copy; 2025 Incredible India Tour. All rights reserved.</p>
+  </footer>
+</main>
+
+<a href="#top" id="back-to-top">&#8679;</a>
+
+<div id="level-banner"></div>
+
+<script>
+const levels = [
+  // Level 1 - Medium
+  [
+    "##########",
+    "#P      M#",
+    "### ###  #",
+    "#   #    #",
+    "# M ###M #",
+    "#   #    #",
+    "###    ####",
+    "# M      #",
+    "#      M #",
+    "##########"
+  ],
+  // Level 2 - Hard (all rows length 15)
+  [
+    "###############",
+    "#P  M#   M#   #",
+    "# ## # ### # # ",
+    "#    # M # # # ",
+    "## ### ### # # ",
+    "# M  #  M  # # ",
+    "# ### # ##### #",
+    "#     #     M #",
+    "# ### ### ### #",
+    "#   M      M  #",
+    "###############"
+  ],
+  // Level 3 - Very Hard (all rows length 20)
+  [
+    "####################",
+    "#P   #   M         #",
+    "### ### ####### ## #",
+    "# M     #     #M#  #",
+    "# ### ##### ### ## #",
+    "#   #   M #     #  #",
+    "### # ### ### ######",
+    "#   #      M#      #",
+    "# ######### ###### #",
+    "#    M     M    M  #",
+    "####################"
+  ]
+];
+
+let currentLevel = 0;
+let mazeLayout = [];
+let playerPos = {x: 0, y: 0};
+let monuments = 0;
+
+function showBanner(msg) {
+  const banner = document.getElementById("level-banner");
+  banner.textContent = msg;
+  banner.style.display = "block";
+  setTimeout(() => {
+    banner.style.display = "none";
+  }, 1500);
+}
+
+function loadLevel(levelIndex) {
+  // Deep copy of maze layout as 2D array of chars
+  mazeLayout = levels[levelIndex].map(row => row.split(''));
+  playerPos = findPlayer();
+  monuments = countMonuments();
+  drawMaze();
+  document.getElementById("status").textContent = `Monuments left: ${monuments}`;
+  document.getElementById("level-status").textContent = `Level ${levelIndex + 1}`;
+  const container = document.getElementById("maze-container");
+  container.style.gridTemplateColumns = `repeat(${mazeLayout[0].length}, 40px)`;
+  container.style.gridTemplateRows = `repeat(${mazeLayout.length}, 40px)`;
+}
+
+function findPlayer() {
+  for (let y = 0; y < mazeLayout.length; y++) {
+    for (let x = 0; x < mazeLayout[y].length; x++) {
+      if (mazeLayout[y][x] === "P") return {x, y};
+    }
+  }
+}
+
+function countMonuments() {
+  let count = 0;
+  for (let row of mazeLayout) {
+    for (let cell of row) {
+      if (cell === "M") count++;
+    }
+  }
+  return count;
+}
+
+function drawMaze() {
+  const container = document.getElementById("maze-container");
+  container.innerHTML = "";
+  mazeLayout.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      const div = document.createElement("div");
+      div.classList.add("cell");
+      if (cell === "#") div.classList.add("wall");
+      else if (cell === "P") {
+        div.classList.add("player");
+        div.textContent = "You";
+      }
+      else if (cell === "M") {
+        div.classList.add("monument");
+        div.textContent = "M";
+      }
+      container.appendChild(div);
+    });
+  });
+}
+
+function move(dx, dy) {
+  const newX = playerPos.x + dx;
+  const newY = playerPos.y + dy;
+
+  // Check boundaries
+  if (newY < 0 || newY >= mazeLayout.length || newX < 0 || newX >= mazeLayout[0].length) {
+    return;
+  }
+
+  const targetCell = mazeLayout[newY][newX];
+
+  if (targetCell !== "#") {
+    if (targetCell === "M") {
+      monuments--;
+      document.getElementById("status").textContent = `Monuments left: ${monuments}`;
+      mazeLayout[newY][newX] = " ";
+      if (monuments === 0) {
+        if (currentLevel < levels.length - 1) {
+          showBanner("🎉 Hooray! Level complete. Next level coming up...");
+          setTimeout(() => {
+            currentLevel++;
+            loadLevel(currentLevel);
+          }, 2000);
+        } else {
+          showBanner("🎉 You completed all levels!");
+        }
+        return;
+      }
+    }
+    // Move player
+    mazeLayout[playerPos.y][playerPos.x] = " ";
+    playerPos = {x: newX, y: newY};
+    mazeLayout[newY][newX] = "P";
+    drawMaze();
+  }
+}
+
+document.addEventListener("keydown", e => {
+  switch (e.key) {
+    case "ArrowUp":
+      e.preventDefault();
+      move(0, -1);
+      break;
+    case "ArrowDown":
+      e.preventDefault();
+      move(0, 1);
+      break;
+    case "ArrowLeft":
+      e.preventDefault();
+      move(-1, 0);
+      break;
+    case "ArrowRight":
+      e.preventDefault();
+      move(1, 0);
+      break;
+  }
+});
+
+window.onload = () => {
+  document.body.tabIndex = 0;  // Make body focusable
+  document.body.focus();
+  loadLevel(currentLevel);
+};
+</script>
+</body>
+</html>
